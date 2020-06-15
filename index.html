@@ -1,0 +1,43 @@
+﻿<html>
+<head>
+    <title>Графики 3D</title>
+    <meta charset="utf-8" />
+    <link href='css/style.css' rel='stylesheet' />
+    <script src='js/graph3D/entities/Point.js'></script>
+    <script src='js/graph3D/entities/Edge.js'></script>
+    <script src='js/graph3D/entities/Polygon.js'></script>
+    <script src='js/graph3D/entities/Subject.js'></script>
+    <script src="js/graph3D/entities/Light.js"></script>
+
+    <script src='js/graph3D/Surfaces/Surfaces.js'></script>
+    <script src='js/graph3D/Surfaces/cube.js'></script>
+    <script src='js/graph3D/Surfaces/bublik.js'></script>
+    <script src='js/graph3D/Surfaces/sphere.js'></script>
+    <script src='js/graph3D/Surfaces/paraboloid.js'></script>
+    <script src='js/graph3D/Surfaces/hyperbolicParaboloid.js'></script>
+    <script src='js/graph3D/Surfaces/hyperbolicCylinder.js'></script>
+    <script src='js/graph3D/Surfaces/parabolicCylinder.js'></script>
+    <script src='js/graph3D/Surfaces/ellipticCylinder.js'></script>
+    <script src='js/graph3D/Surfaces/singlecavityHyperboloid.js'></script>
+    <script src='js/graph3D/Surfaces/doublecavityHyperboloid.js'></script>
+    <script src='js/graph3D/Surfaces/ellipsoid.js'></script>
+    <script src='js/graph3D/Surfaces/cone.js'></script>
+    <script src='js/graph3D/Surfaces/ellipticParaboloid.js'></script>
+    
+    <script src='js/graph3D/Math3D.js'></script>
+    <script src='js/graph3D/Graph3D.js'></script>
+    <script src='js/graph/Canvas.js'></script>
+    <script src="js/UI/UI.js"></script>
+    <script src='js/main.js'></script>
+</head>
+<body>
+    <div>
+        <canvas id='canvas'></canvas>
+    </div>
+    <div>
+        <label><input type='checkbox' id='pointsCheckbox' > Рисовать точки</label>
+        <label><input type='checkbox' id='edgesCheckbox' > Рисовать ребра</label>
+        <label><input type='checkbox' id='polygonsCheckbox' checked> Рисовать полигоны</label>
+    </div>
+</body>
+</html>
