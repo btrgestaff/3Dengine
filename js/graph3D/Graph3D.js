@@ -4,6 +4,8 @@ class Graph3D {
         this.math = new Math3D();
     }
 
+// не нужны больше
+/*
     xs(point) {
         const zs = this.WINDOW.CENTER.z;
         const z0 = this.WINDOW.CAMERA.z;
@@ -17,37 +19,37 @@ class Graph3D {
         const y0 = this.WINDOW.CAMERA.y;
         return (point.y - y0) / (point.z - z0) * (zs - z0) + y0;
     }
-
+*/
     zoomMatrix(delta) {
-        this.math.zoomMatrix(delta);
+        this.math.transformMatrix([this.math.zoomMatrix(delta)]);
     }
 
-    // масштабирование точки
-    zoom(delta, point) { 
-        this.math.zoom(point); 
+    moveMatrix(sx, sy, sz) {
+      this.math.transformMatrix([this.math.moveMatrix(sx, sy, sz)]);
     }
 
-    // перенос точки вдоль оси Ox
-    moveOx(xs, point) { 
-        return this.math.move(delta, 0, 0, point);
-    }
-    // перенос точки вдоль оси Oy
-    moveOy(ys, point) { 
-        return this.math.move(0, delta, 0, point);
-    }
-    move(x, y, z, point) {
-        this.math.move(x, y, z, point);
+    rotateOxMatrix(alpha) {
+      this.math.transformMatrix([this.math.rotateOxMatrix(alpha)]);
     }
 
-    // повороты по осям
-    rotateOx(alpha, point) {
-        this.math.rotateOx(alpha, point);
+    rotateOyMatrix(alpha) {
+      this.math.transformMatrix([this.math.rotateOyMatrix(alpha)]);
     }
-    rotateOy(alpha, point) {
-        this.math.rotateOy(alpha, point);
+
+    rotateOzMatrix(alpha) {
+      this.math.transformMatrix([this.math.rotateOzMatrix(alpha)]);
     }
-    rotateOz(alpha, point) {
-        this.math.rotateOz(alpha, point);
+
+    animateMatrix(x1, y1, z1, key, alpha, x2, y2, z2) {
+      this.math.transformMatrix([
+        this.math.moveMatrix(x1, y1, z1),
+        this.math[`${key}Matrix`](alpha),
+        this.math.moveMatrix(x2, y2, z2)
+      ])
+    }
+
+    transform(point) {
+      this.math.transform(point);
     }
 
     // расчет расстояния от полигона до точки
@@ -85,5 +87,26 @@ class Graph3D {
             const vector3 = this.math.vectorProd(vector1, vector2);
             subject.polygons[i].visible = this.math.calcGorner(viewVector, vector3) <= perpendicular;
         }
+    }
+
+    calcPlaneEquation() {
+      this.math.calcPlaneEquation(this.WINDOW.CAMERA, this.WINDOW.CENTER);
+    }
+
+    calcWindowVectors() {
+        this.P1P2 = this.math.calcVector(this.WINDOW.P2, this.WINDOW.P1);
+        this.P2P3 = this.math.calcVector(this.WINDOW.P2, this.WINDOW.P3);
+    }
+
+    getProjection(point) {
+        const M = this.math.getProjection(point);
+        const P2M = this.math.calcVector(this.WINDOW.P2, M);
+        const cosa = this.math.calcGorner(this.P1P2, P2M);
+        const cosb = this.math.calcGorner(this.P2P3, P2M);
+        const module = this.math.calcVectorModule(P2M);
+        return {
+            x: cosa * module,
+            y: cosb * module
+        };
     }
 }

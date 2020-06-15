@@ -15,21 +15,27 @@ window.onload = function () {
         BOTTOM: -10,
         WIDTH: 20,
         HEIGHT: 20,
+        P1: new Point(-10, 10, -30), // Левый верхний угол
+        P2: new Point(-10, -10, -30), // Левый нижний угол
+        P3: new Point(10, -10, -30), // правый нижний угол
         CENTER: new Point(0, 0, -30), // центр окошка, через которое видим мир
         CAMERA: new Point(0, 0, -50) // точка, из которой смотрим на мир
     };
     const ZOOM_OUT = 1.1;
     const ZOOM_IN = 0.9;
 
+    const rotateCooef = 7;
+
     const sur = new Surfaces;
     const canvas = new Canvas({id: 'canvas', width: 600, height: 600, WINDOW, callbacks: { wheel, mousemove, mouseup, mousedown}});
     const graph3D = new Graph3D({ WINDOW });
-    const ui = new UI({ callbacks: {printPoints, printEdges, printPolygons}});
+    const ui = new UI({ callbacks: { move, printPoints, printEdges, printPolygons}});
     // сцена
     const SCENE = [
-        sur.sphere(10, 10, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 1}), //Солнце
-        sur.sphere(10, 10, 0.1, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 3}),  // Меркурий
-        sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера 
+        sur.sphere(40, 40, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), //Солнце
+        sur.sphere(40, 40, 1.7, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), // Меркурий
+        /*
+        sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера
         sur.sphere(10, 10, 1, new Point(-15, 0, 0), '#1200c2', {rotateOz: new Point(0, 0 ,0), speedCoef: 1.5}),  // Земля
         sur.sphere(10, 10, 0.1, new Point(-15, 0, 0), '#535353', {rotateOz: new Point(0, 0 ,0), speedCoef: 1}), // Луна
         sur.sphere(10, 10, 0.9, new Point(-20, 0, 0), '#a63700', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.8}),  // Марс
@@ -38,9 +44,9 @@ window.onload = function () {
         sur.sphere(10, 10, 1.2, new Point(-30, 0, 0), '#c6a452', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.35}),  // Сатурн
         sur.sphere(10, 10, 1.1, new Point(-35, 0, 0), '#0081c6', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.2}), // Уран
         sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
+        */
     ];
-    console.log(SCENE[3]);
-    const LIGHT = new Light(0, 0, 0, 100); // источник света
+    const LIGHT = new Light(-5, 0, 0, 100); // источник света
 
     let canRotate;
     let canPrint = {
@@ -54,11 +60,11 @@ window.onload = function () {
         const delta = (event.wheelDelta > 0) ? ZOOM_IN : ZOOM_OUT;
         graph3D.zoomMatrix(delta);
         SCENE.forEach(subject => {
-            subject.points.forEach(point => graph3D.zoom(point));
+            subject.points.forEach(point => graph3D.transform(point));
             if (subject.animation) {
                 for (let key in subject.animation) {
                     if (key === 'rotateOx' || key === 'rotateOy' || key === 'rotateOz') {
-                        graph3D.zoom(subject.animation[key]);
+                        graph3D.transform(subject.animation[key]);
                     }
                 }
             }
@@ -73,16 +79,31 @@ window.onload = function () {
         canRotate = true;
     }
 
+    function move(direction) {
+      switch (direction) {
+        case 'up': graph3D.rotateOxMatrix(-Math.PI / 180); break;
+        case 'down': graph3D.rotateOxMatrix(Math.PI / 180); break;
+        case 'left': graph3D.rotateOyMatrix(-Math.PI / 180); break;
+        case 'right': graph3D.rotateOyMatrix(Math.PI / 180); break;
+      }
+      graph3D.transform(WINDOW.CAMERA);
+      graph3D.transform(WINDOW.CENTER);
+      graph3D.transform(WINDOW.P1);
+      graph3D.transform(WINDOW.P2);
+      graph3D.transform(WINDOW.P3);
+    }
+
     function mousemove(event) {
         if (canRotate) {
             if (event.movementX) { // вращение вокруг Oy
                 const alpha = (event.movementX > 0) ? -canvas.sx(event.movementX) / (WINDOW.CENTER.z * 50) : canvas.sx(event.movementX) / (WINDOW.CENTER.z * 50);
+                graph3D.rotateOxMatrix(alpha*rotateCooef);
                 SCENE.forEach(subject => {
-                    subject.points.forEach(point => graph3D.rotateOy(alpha, point))
+                    subject.points.forEach(point => graph3D.transform(point))
                     if (subject.animation) {
                         for (let key in subject.animation) {
                             if (key === 'rotateOx' || key === 'rotateOy' || key === 'rotateOz') {
-                                graph3D.rotateOy(alpha, subject.animation[key]);
+                                graph3D.transform(subject.animation[key]);
                             }
                         }
                     }
@@ -90,12 +111,13 @@ window.onload = function () {
             }
             if (event.movementY) { // вращение вокруг Ox
                 const alpha = (event.movementY > 0) ? -canvas.sx(event.movementX) / (WINDOW.CENTER.z * 50) : canvas.sx(event.movementX) / (WINDOW.CENTER.z * 50);
+                graph3D.rotateOyMatrix(alpha*rotateCooef);
                 SCENE.forEach(subject => {
-                    subject.points.forEach(point => graph3D.rotateOx(alpha, point))
+                    subject.points.forEach(point => graph3D.transform(point))
                     if (subject.animation) {
                         for (let key in subject.animation) {
                             if (key === 'rotateOx' || key === 'rotateOy' || key === 'rotateOz') {
-                                graph3D.rotateOx(alpha, subject.animation[key]);
+                                graph3D.transform(subject.animation[key]);
                             }
                         }
                     }
@@ -114,34 +136,22 @@ window.onload = function () {
     function printPolygons(value) {
         canPrint.polygons = value;
     }
-    
+
     // about render
     function printAllPolygons() {
         if (canPrint.polygons) {
             const polygons = [];
             SCENE.forEach(subject => {
-                graph3D.calcGorner(subject, WINDOW.CAMERA);
+              //  graph3D.calcGorner(subject, WINDOW.CAMERA);
                 graph3D.calcDistance(subject, WINDOW.CAMERA, 'distance');
                 graph3D.calcDistance(subject, LIGHT, 'lumen');
                 for (let i = 0; i < subject.polygons.length; i++) {
                     if (subject.polygons[i].visible) {
                         const polygon = subject.polygons[i];
-                        const point1 = {
-                            x: graph3D.xs(subject.points[polygon.points[0]]),
-                            y: graph3D.ys(subject.points[polygon.points[0]])
-                        };
-                        const point2 = {
-                            x: graph3D.xs(subject.points[polygon.points[1]]),
-                            y: graph3D.ys(subject.points[polygon.points[1]])
-                        };
-                        const point3 = {
-                            x: graph3D.xs(subject.points[polygon.points[2]]),
-                            y: graph3D.ys(subject.points[polygon.points[2]])
-                        };
-                        const point4 = {
-                            x: graph3D.xs(subject.points[polygon.points[3]]),
-                            y: graph3D.ys(subject.points[polygon.points[3]])
-                        };
+                        const point1 = graph3D.getProjection(subject.points[polygon.points[0]]);
+                        const point2 = graph3D.getProjection(subject.points[polygon.points[1]]);
+                        const point3 = graph3D.getProjection(subject.points[polygon.points[2]]);
+                        const point4 = graph3D.getProjection(subject.points[polygon.points[3]]);
                         let {r, g, b} = polygon.color;
                         const lumen = graph3D.calcIllumination(polygon.lumen, LIGHT.lumen);
                         r = Math.round(r * lumen);
@@ -160,7 +170,7 @@ window.onload = function () {
             polygons.forEach(polygon => {canvas.polygon(polygon.points, polygon.color)});
         }
     }
-    
+
     function printSubject(subject) {
         // print edges
         if (canPrint.edges) {
@@ -185,6 +195,7 @@ window.onload = function () {
         printAllPolygons();
         SCENE.forEach(subject => printSubject(subject));
         canvas.text(-7, 7, FPSout);
+        canvas.render();
     }
 
     function animation() {
@@ -197,13 +208,10 @@ window.onload = function () {
                         const xn = WINDOW.CENTER.x - x;
                         const yn = WINDOW.CENTER.y - y;
                         const zn = WINDOW.CENTER.z - z;
-                        // переместить цент фигуры в центр координат
-                        subject.points.forEach(point => {graph3D.move(xn, yn, zn, point)});
-                        // вращение фигуры
                         const alpha = Math.PI / 180 * subject.animation.speedCoef;
-                        subject.points.forEach(point => graph3D[key](alpha, point))
-                        // вернуть центр фигуры обратно
-                        subject.points.forEach(point => {graph3D.move(-xn, -yn, -zn, point)});
+                        graph3D.animateMatrix(xn, yn, zn, key, alpha, -xn, -yn, -zn);
+                        subject.points.forEach(point => {graph3D.transform(point)});
+
                     }
                 }
             }
@@ -224,9 +232,10 @@ window.onload = function () {
             FPSout = FPS;
             FPS = 0;
         }
-
+        graph3D.calcPlaneEquation(); // получить и записать плоскость экрана
+        graph3D.calcWindowVectors(); // вычислить вектора экрана
         // отрисовка сцены
         render();
         requestAnimFrame(animloop);
     })();
-}; 
+};
