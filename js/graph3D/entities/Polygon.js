@@ -5,6 +5,9 @@ class Polygon{
         this.distance = distance;
         this.lumen = 1;
         this.visible = true;
+
+        this.center = new Point; // вычисляемый центр полигона
+        
     }
 
     hexToRgb(hex) {
@@ -15,7 +18,7 @@ class Polygon{
         b: parseInt(result[3], 16)
         } : { r: 0, g: 0, b: 0 };
     }
-        
+
     rgbToHex(r, g, b) {
         return `rgb(${r},${g},${b})`;
         //return "#" + ((r<<16) + (g<<16) + b).toString(16);

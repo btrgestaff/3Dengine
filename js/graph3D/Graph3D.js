@@ -52,22 +52,31 @@ class Graph3D {
       this.math.transform(point);
     }
 
+    // посчитать центры всех полигонов обьектов
+    calcCenters(subject) {
+      for (let i = 0; i < subject.polygons.length; i++) {
+              const polygon = subject.polygons[i];
+              const points = polygon.points;
+              let x = 0, y = 0, z = 0;
+              for (let j = 0; j < points.length; j++) {
+                  x += subject.points[points[j]].x;
+                  y += subject.points[points[j]].y;
+                  z += subject.points[points[j]].z;
+              }
+              polycon.center.x = x / points.length;
+              polycon.center.y = y / points.length;
+              polycon.center.z = z / points.length;
+          }
+      }
+
     // расчет расстояния от полигона до точки
     calcDistance(subject, endPoint, name) {
         for (let i = 0; i < subject.polygons.length; i++) {
             if (subject.polygons[i].visible) {
-                const points = subject.polygons[i].points;
-                let x = 0, y = 0, z = 0;
-                for (let j = 0; j < points.length; j++) {
-                    x += subject.points[points[j]].x;
-                    y += subject.points[points[j]].y;
-                    z += subject.points[points[j]].z;
-                }
-                x /= points.length;
-                y /= points.length;
-                z /= points.length;
-                const dist = Math.sqrt(Math.pow(endPoint.x - x, 2) + Math.pow(endPoint.y - y, 2) + Math.pow(endPoint.z - z, 2));
-                subject.polygons[i][name] = dist;
+                subject.polygons[i][name] =
+                      Math.sqrt((endPoint.x - x) * (endPoint.x - x) +
+                                (endPoint.y - y) * (endPoint.y - y) +
+                                (endPoint.z - z) * (endPoint.z - z));
             }
         }
     }
