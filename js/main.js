@@ -33,7 +33,7 @@ window.onload = function () {
     // сцена
     const SCENE = [
         sur.sphere(40, 40, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), //Солнце
-        sur.sphere(40, 40, 1.7, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), // Меркурий
+        sur.sphere(40, 40, 1.7, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.3}), // Меркурий
         /*
         sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера
         sur.sphere(10, 10, 1, new Point(-15, 0, 0), '#1200c2', {rotateOz: new Point(0, 0 ,0), speedCoef: 1.5}),  // Земля
