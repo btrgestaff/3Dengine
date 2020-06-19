@@ -33,7 +33,7 @@ window.onload = function () {
     // сцена
     const SCENE = [
         sur.sphere(40, 40, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), //Солнце
-        sur.sphere(40, 40, 1.7, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.3}), // Меркурий
+        sur.sphere(40, 40, 1.7, new Point(-10, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.6}), // Меркурий
         /*
         sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера
         sur.sphere(10, 10, 1, new Point(-15, 0, 0), '#1200c2', {rotateOz: new Point(0, 0 ,0), speedCoef: 1.5}),  // Земля
@@ -46,7 +46,7 @@ window.onload = function () {
         sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
         */
     ];
-    const LIGHT = new Light(-5, 0, 0, 100); // источник света
+    const LIGHT = new Light(-100, 2, -10, 20000); // источник света
 
     let canRotate;
     let canPrint = {
@@ -56,7 +56,7 @@ window.onload = function () {
     };
 
     // about callbacks
-    function wheel(event) {
+  /*  function wheel(event) {
         const delta = (event.wheelDelta > 0) ? ZOOM_IN : ZOOM_OUT;
         graph3D.zoomMatrix(delta);
         SCENE.forEach(subject => {
@@ -69,7 +69,18 @@ window.onload = function () {
                 }
             }
         });
+    } */
+
+    function wheel(event) {
+      const delta = (event.wheelDelta > 0) ? ZOOM_OUT : ZOOM_IN;
+      graph3D.zoomMatrix(delta);
+      graph3D.transform(WINDOW.CAMERA);
+      graph3D.transform(WINDOW.CENTER);
+      graph3D.transform(WINDOW.P1);
+      graph3D.transform(WINDOW.P2);
+      graph3D.transform(WINDOW.P3);
     }
+
 
     function mouseup(){
         canRotate = false;
@@ -140,11 +151,17 @@ window.onload = function () {
     // about render
     function printAllPolygons() {
         if (canPrint.polygons) {
+          // набрать полигоны в кучу
             const polygons = [];
+          // предварительные расчеты
             SCENE.forEach(subject => {
-              //  graph3D.calcGorner(subject, WINDOW.CAMERA);
-                graph3D.calcDistance(subject, WINDOW.CAMERA, 'distance');
-                graph3D.calcDistance(subject, LIGHT, 'lumen');
+              graph3D.calcGorner(subject, WINDOW.CAMERA); //определяем видимые полигоны
+              graph3D.calcCenters(subject); // найти цетры всех полигонов
+              graph3D.calcDistance(subject, WINDOW.CAMERA, 'distance'); // записать дистанцию
+              graph3D.calcDistance(subject, LIGHT, 'lumen'); // дистанция от полигона до источника света
+            });
+          // расчет освещенности полигона и его проекции на экран
+            SCENE.forEach(subject => {
                 for (let i = 0; i < subject.polygons.length; i++) {
                     if (subject.polygons[i].visible) {
                         const polygon = subject.polygons[i];
@@ -153,7 +170,8 @@ window.onload = function () {
                         const point3 = graph3D.getProjection(subject.points[polygon.points[2]]);
                         const point4 = graph3D.getProjection(subject.points[polygon.points[3]]);
                         let {r, g, b} = polygon.color;
-                        const lumen = graph3D.calcIllumination(polygon.lumen, LIGHT.lumen);
+                        const { isShadow, dark } = graph3D.calcShadow(polygon, subject, SCENE, LIGHT);
+                        const lumen = (isShadow) ? dark : graph3D.calcIllumination(polygon.lumen, LIGHT.lumen);
                         r = Math.round(r * lumen);
                         g = Math.round(g * lumen);
                         b = Math.round(b * lumen);

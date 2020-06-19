@@ -7,7 +7,7 @@ class Polygon{
         this.visible = true;
 
         this.center = new Point; // вычисляемый центр полигона
-        
+    
     }
 
     hexToRgb(hex) {

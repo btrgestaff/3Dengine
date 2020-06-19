@@ -63,20 +63,22 @@ class Graph3D {
                   y += subject.points[points[j]].y;
                   z += subject.points[points[j]].z;
               }
-              polycon.center.x = x / points.length;
-              polycon.center.y = y / points.length;
-              polycon.center.z = z / points.length;
+              polygon.center.x = x / points.length;
+              polygon.center.y = y / points.length;
+              polygon.center.z = z / points.length;
           }
       }
 
     // расчет расстояния от полигона до точки
     calcDistance(subject, endPoint, name) {
         for (let i = 0; i < subject.polygons.length; i++) {
-            if (subject.polygons[i].visible) {
-                subject.polygons[i][name] =
-                      Math.sqrt((endPoint.x - x) * (endPoint.x - x) +
-                                (endPoint.y - y) * (endPoint.y - y) +
-                                (endPoint.z - z) * (endPoint.z - z));
+          const polygon = subject.polygons[i];
+            if (polygon.visible) {
+                polygon[name] =
+                      Math.sqrt(Math.pow(endPoint.x - polygon.center.x,2) +
+                                Math.pow(endPoint.y - polygon.center.y,2) +
+                                Math.pow(endPoint.z - polygon.center.z,2));
+
             }
         }
     }
@@ -86,6 +88,78 @@ class Graph3D {
         return (illum > 1) ? 1 : illum;
     }
 
+/*
+    calcShadow(polygon, SCENE, subject, LIGHT) {
+      const M1 = polygon.center;
+      const s = this.math.calcVector(M1, LIGHT);
+      for (let i = 0; i < SCENE.length; i++) {
+        if (subject.id !== SCENE[i].id) {
+          for (let j = 0; j < SCENE[i].polygons.length; j++) {
+
+            const polygon2 = SCENE[i].polygons[j];
+            if (polygon2.visible) {
+              const M0 = polygon2.center;
+              if (M1.x === M0.x && M1.y === M0.y && M1.z === M0.z) {
+                continue;
+              }
+              // не учитывать полигоны которые находятся дальше исходного полигона
+              if (polygon2.lumen > polygon.lumen) {
+                continue;
+              }
+              const dark = this.math.calcVectorModule(
+                           this.math.vectorProd(this.math.calcVector(M0, M1), s)
+                       ) / this.math.calcVectorModule(s);
+              if (dark < 0.5) {
+                return {
+                    isShadow: true,
+                    dark: dark / 10
+                };
+              }
+            }
+          }
+        }
+      }
+    }
+*/
+
+calcShadow(polygon, subject, SCENE, LIGHT) {
+
+    const M1 = polygon.center;
+    const s = this.math.calcVector(M1, LIGHT);
+
+    for(let i = 0; i < SCENE.length; i++) {
+        if(subject.id != SCENE[i].id){
+            for (let j = 0; j < SCENE[i].polygons.length; j++) {
+                const polygon2 = SCENE[i].polygons[j];
+                if(polygon2.visible){
+                    const M0 = polygon2.center;
+
+                    if (M1.x === M0.x && M1.y === M0.y && M1.z === M0.z) {
+                        continue;
+                    }
+
+                    if (polygon2.lumen > polygon.lumen) {
+                        continue;
+                    }
+
+                    const dark = this.math.calcVectorModule(this.math.vectorProd(this.math.calcVector(M0, M1), s))
+                    / this.math.calcVectorModule(s);
+                    if(dark < 0.5) {
+                        return {
+                            isShadow: true,
+                            dark: dark / 10
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return {
+        isShadow: false,
+        dark: 1
+    }
+}
     calcGorner(subject, endPoint) {
         const perpendicular = Math.cos(Math.PI / 2);
         const viewVector = this.math.calcVector(endPoint, new Point(0 ,0 ,0));
