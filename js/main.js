@@ -32,19 +32,17 @@ window.onload = function () {
     const ui = new UI({ callbacks: { move, printPoints, printEdges, printPolygons}});
     // сцена
     const SCENE = [
-        sur.sphere(40, 40, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.0}), //Солнце
-        sur.sphere(40, 40, 1.7, new Point(-10, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.6}), // Меркурий
-        /*
-        sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера
-        sur.sphere(10, 10, 1, new Point(-15, 0, 0), '#1200c2', {rotateOz: new Point(0, 0 ,0), speedCoef: 1.5}),  // Земля
-        sur.sphere(10, 10, 0.1, new Point(-15, 0, 0), '#535353', {rotateOz: new Point(0, 0 ,0), speedCoef: 1}), // Луна
-        sur.sphere(10, 10, 0.9, new Point(-20, 0, 0), '#a63700', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.8}),  // Марс
-        sur.sphere(10, 10, 1.5, new Point(-25, 0, 0), '#c8a283', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.5}), // Юпитер
-        sur.bublik(20, 2.5, new Point(-25, 0, 0), '#2d2118', {rotateOz: new Point(0, 0, 0), speedCoef: 0.5}), // кольцо Юпитера
-        sur.sphere(10, 10, 1.2, new Point(-30, 0, 0), '#c6a452', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.35}),  // Сатурн
-        sur.sphere(10, 10, 1.1, new Point(-35, 0, 0), '#0081c6', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.2}), // Уран
-        sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
-        */
+      sur.sphere(10, 10, 3, new Point(0, 0, 0), '#fff100', {rotateOz: new Point(0, 0 ,0), speedCoef: 1}), //Солнце
+      sur.sphere(10, 10, 0.1, new Point(-5, 0, 0), '#a5a154', {rotateOz: new Point(0, 0 ,0), speedCoef: 3}),  // Меркурий
+      sur.sphere(10, 10, 0.3, new Point(-10, 0, 0), '#be9921', {rotateOz: new Point(0, 0 ,0), speedCoef: 2}), // Венера
+      sur.sphere(10, 10, 1, new Point(-15, 0, 0), '#1200c2', {rotateOz: new Point(0, 0 ,0), speedCoef: 1.5}),  // Земля
+      sur.sphere(10, 10, 0.1, new Point(-15, 0, 0), '#535353', {rotateOz: new Point(0, 0 ,0), speedCoef: 1}), // Луна
+      sur.sphere(10, 10, 0.9, new Point(-20, 0, 0), '#a63700', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.8}),  // Марс
+      sur.sphere(10, 10, 1.5, new Point(-25, 0, 0), '#c8a283', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.5}), // Юпитер
+      sur.bublik(20, 2.5, new Point(-25, 0, 0), '#2d2118', {rotateOz: new Point(0, 0, 0), speedCoef: 0.5}), // кольцо Юпитера
+      sur.sphere(10, 10, 1.2, new Point(-30, 0, 0), '#c6a452', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.35}),  // Сатурн
+      sur.sphere(10, 10, 1.1, new Point(-35, 0, 0), '#0081c6', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.2}), // Уран
+      sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
     ];
     const LIGHT = new Light(-100, 2, -10, 250000); // источник света
 
