@@ -46,7 +46,7 @@ window.onload = function () {
         sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
         */
     ];
-    const LIGHT = new Light(-100, 2, -10, 20000); // источник света
+    const LIGHT = new Light(-100, 2, -10, 250000); // источник света
 
     let canRotate;
     let canPrint = {
@@ -56,7 +56,7 @@ window.onload = function () {
     };
 
     // about callbacks
-  /*  function wheel(event) {
+    function wheel(event) {
         const delta = (event.wheelDelta > 0) ? ZOOM_IN : ZOOM_OUT;
         graph3D.zoomMatrix(delta);
         SCENE.forEach(subject => {
@@ -69,8 +69,8 @@ window.onload = function () {
                 }
             }
         });
-    } */
-
+    }
+    /*
     function wheel(event) {
       const delta = (event.wheelDelta > 0) ? ZOOM_OUT : ZOOM_IN;
       graph3D.zoomMatrix(delta);
@@ -80,7 +80,7 @@ window.onload = function () {
       graph3D.transform(WINDOW.P2);
       graph3D.transform(WINDOW.P3);
     }
-
+    */
 
     function mouseup(){
         canRotate = false;
