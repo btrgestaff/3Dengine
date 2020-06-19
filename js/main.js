@@ -44,7 +44,7 @@ window.onload = function () {
       sur.sphere(10, 10, 1.1, new Point(-35, 0, 0), '#0081c6', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.2}), // Уран
       sur.sphere(10, 10, 1.1, new Point(-40, 0, 0), '#004e77', {rotateOz: new Point(0, 0 ,0), speedCoef: 0.1}),  // Нептун
     ];
-    const LIGHT = new Light(0, 0, 0, 100); // источник света
+    const LIGHT = new Light(0, 0, 0, 1000); // источник света
 
     let canRotate;
     let canPrint = {
